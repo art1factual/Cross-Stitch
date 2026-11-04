@@ -24,9 +24,9 @@ public class CrossStitchRagdoll : MonoBehaviour
         //Legs 
         Rigidbody leftThigh = CreateBodyPart("Left Thigh", new Vector3(-0.15f, 0.70f, 0f), new Vector3(0.20f, 0.40f, 0.24f), 3f);
 
-        Rigidbody rightThight = CreateBodyPart("Right Thigh", new Vector3(0.15f, 0.70f, 0f), new Vector3(0.20f, 0.40f, .24f), 3f);
+        Rigidbody rightThigh = CreateBodyPart("Right Thigh", new Vector3(0.15f, 0.70f, 0f), new Vector3(0.20f, 0.40f, .24f), 3f);
 
-        Rigidbody righhtShin = CreateBodyPart("Right Shin", new Vector3(0.15f, 0.28f, 0.f), new Vector3( 0.18f, 0.40f, 0.22f), 2f);
+        Rigidbody rightShin = CreateBodyPart("Right Shin", new Vector3(0.15f, 0.28f, 0f), new Vector3( 0.18f, 0.40f, 0.22f), 2f);
         
         
         Rigidbody leftShin = CreateBodyPart("Left Shin", new Vector3(-0.15f, 0.28f, 0f), new Vector3(0.18f, 0.40f, 0.22f), 2f);
@@ -39,16 +39,37 @@ public class CrossStitchRagdoll : MonoBehaviour
 
         Rigidbody leftForearm = CreateBodyPart("Left Forearm", new Vector3(-0.40f, 1.08f, 0f), new Vector3(0.16f, 0.36f, 0.20f), 1f);
 
-        Rigidbody rightForeame = CreateBodyPart("Right ForeArm", new Vector3(0.40f, 1.085f, 0f), new Vector3(0.40f, 1.085f, 0f),
+        Rigidbody rightForearm = CreateBodyPart("Right ForeArm", new Vector3(0.40f, 1.085f, 0f),
         new Vector3(0.16f, 0.36f, 0.20f), 1f);
 
+        Rigidbody leftFoot = CreateBodyPart("Left Foot", new Vector3(-0.15f, 0.04f, 0.10f), new Vector3(0.26f, 0.08f, 0.46f), 1f);
+
+        Rigidbody rightFoot = CreateBodyPart("Right Foot", new Vector3(0.15f, 0.04f, 0.10f), new Vector3(0.26f, 0.08f, 0.46f), 1f);
+
+        leftFoot.gameObject.AddComponent<CrossStitchGroundContact>();
+        rightFoot.gameObject.AddComponent<CrossStitchGroundContact>();
+
+
         //Hips and Knees
+        Connect(leftThigh, pelvis, new Vector3(-0.15f, 0.90f, 0f), 45f);
+        Connect(rightThigh, pelvis, new Vector3(0.15f, 0.90f, 0f), 45f);
+        Connect(leftShin, leftThigh, new Vector3(-0.15f, 0.49f, 0f), 60f);
+        Connect(rightShin, rightThigh, new Vector3(0.15f, 0.49f, 0f), 60f);
+        
+        //Shoulders and Elbows
+        Connect(leftUpperArm, torso, new Vector3(-0.31f, 1.66f, 0f), 65f);
+        Connect(rightUpperArm, torso, new Vector3(0.31f, 1.66f, 0f), 65);
+        Connect(leftForearm, leftUpperArm, new Vector3(-0.40f, 1.28f, 0f), 65f);
+        Connect(rightForearm, rightUpperArm, new Vector3(0.40f, 1.28f, 0f), 65f);
+
+        Connect(leftFoot, leftShin, new Vector3(-0.15f, 0.08f, 0f), 20f);
+        Connect(rightFoot, rightShin, new Vector3(0.15f, 0.08f, 0f), 20f);
         
 
 
         Rigidbody[] parts =
         {
-            pelvis, torso, head 
+            pelvis, torso, head, leftThigh, rightThigh, leftShin, rightShin, leftFoot, rightFoot, leftUpperArm, rightUpperArm, leftForearm, rightForearm
 
         };
 
@@ -59,6 +80,12 @@ public class CrossStitchRagdoll : MonoBehaviour
                 Physics.IgnoreCollision(parts[i].GetComponent<Collider>(), parts[j].GetComponent<Collider>()
                 );
             }
+        }
+
+        if (!anchorPelvis)
+        {
+            CrossStitchBalance balance = gameObject.AddComponent<CrossStitchBalance>();
+            balance.Initialize(pelvis);
         }
 
 
@@ -112,11 +139,25 @@ public class CrossStitchRagdoll : MonoBehaviour
 
     joint.angularXMotion = ConfigurableJointMotion.Limited;
 
+    joint.angularYMotion = ConfigurableJointMotion.Limited;
+    joint.angularZMotion = ConfigurableJointMotion.Limited;
+
     joint.lowAngularXLimit = new SoftJointLimit { limit = -angleLimit };
     joint.highAngularXLimit = new SoftJointLimit { limit = angleLimit };
     joint.angularYLimit = new SoftJointLimit { limit = angleLimit };
     joint.angularZLimit = new SoftJointLimit { limit = angleLimit };
     joint.enableCollision = false;
+
+    joint.configuredInWorldSpace = false;
+    joint.rotationDriveMode = RotationDriveMode.Slerp;
+
+    joint.slerpDrive = new JointDrive
+    {
+        positionSpring = 600f, positionDamper = 60f, maximumForce = 1000f
+    };
+
+    joint.targetRotation = Quaternion.identity;
+    joint.targetAngularVelocity = Vector3.zero;
 
     }
 }
