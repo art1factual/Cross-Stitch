@@ -1,13 +1,17 @@
 using UnityEngine;
-
+using Unity.MLAgents.Policies;
+using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
 public class CrossStitchRagdoll : MonoBehaviour
 {
 
-    [Header("Initial Joint Test")]
-    public bool anchorPelvis = true;
-
+    [SerializeField] private bool showTrainingPanel = true;
+    [SerializeField]
+    private Unity.InferenceEngine.ModelAsset trainedModel; 
+    
     private void Start()
     {
+
         Rigidbody pelvis = CreateBodyPart("Pelvis", new Vector3(0f, 1.05f, 0f), new Vector3(0.45f, 0.30f, 0.30f), 6f);
 
         Rigidbody torso = CreateBodyPart("Torso", new Vector3(0f, 1.48f, 0f), new Vector3( 0.55f, 0.50f, 0.30f), 8f);
@@ -16,7 +20,6 @@ public class CrossStitchRagdoll : MonoBehaviour
        
         Rigidbody head = CreateBodyPart("Head", new Vector3(0f, 1.96f, 0f), new Vector3(0.30f, 0.34f, 0.30f), 2f);
 
-        pelvis.isKinematic = anchorPelvis;
         Connect(torso, pelvis, new Vector3(0f, 1.22f, 0f), 25f);
 
         Connect(head, torso, new Vector3(0f, 1.76f, 0f),35f);
@@ -64,6 +67,9 @@ public class CrossStitchRagdoll : MonoBehaviour
 
         Connect(leftFoot, leftShin, new Vector3(-0.15f, 0.08f, 0f), 20f);
         Connect(rightFoot, rightShin, new Vector3(0.15f, 0.08f, 0f), 20f);
+
+        
+        
         
 
 
@@ -82,11 +88,45 @@ public class CrossStitchRagdoll : MonoBehaviour
             }
         }
 
-        if (!anchorPelvis)
+            CrossStitchBalance oldBalance = gameObject.GetComponent<CrossStitchBalance>();
+            
+            if (oldBalance != null)
+            {
+                oldBalance.enabled = false;
+            }
+            pelvis.isKinematic = false;
+
+   BehaviorParameters behavior = GetComponent<BehaviorParameters>();
+
+   if (behavior == null)
         {
-            CrossStitchBalance balance = gameObject.AddComponent<CrossStitchBalance>();
-            balance.Initialize(pelvis);
+            behavior = gameObject.AddComponent<BehaviorParameters>();
         }
+
+    
+        behavior.BrainParameters.VectorObservationSize = 177;
+        behavior.BrainParameters.NumStackedVectorObservations = 1;
+
+    behavior.BrainParameters.ActionSpec = ActionSpec.MakeContinuous(48);
+    behavior.BehaviorType = BehaviorType.Default;
+
+    behavior.BehaviorName = "CrossStitchWalk";
+
+
+
+    behavior.Model = trainedModel; 
+    behavior.BehaviorType = trainedModel != null
+    ? BehaviorType.InferenceOnly : BehaviorType.Default;
+    
+
+
+    CrossStitchAgent agent = gameObject.AddComponent<CrossStitchAgent>();
+    agent.showTrainingPanel = showTrainingPanel;
+
+    DecisionRequester requester = gameObject.AddComponent<DecisionRequester>();
+    requester.DecisionPeriod = 5;
+    requester.TakeActionsBetweenDecisions = true;
+
 
 
 

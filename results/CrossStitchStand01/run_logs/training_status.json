@@ -1,0 +1,47 @@
+{
+    "CrossStitchStand": {
+        "checkpoints": [
+            {
+                "steps": 343,
+                "file_path": "results\\CrossStitchStand01\\CrossStitchStand\\CrossStitchStand-343.onnx",
+                "reward": 5.1839617729187015,
+                "creation_time": 1793882589.7286687,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchStand01\\CrossStitchStand\\CrossStitchStand-343.pt"
+                ]
+            },
+            {
+                "steps": 1186,
+                "file_path": "results\\CrossStitchStand01\\CrossStitchStand\\CrossStitchStand-1186.onnx",
+                "reward": 6.578838962316513,
+                "creation_time": 1793882732.8868444,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchStand01\\CrossStitchStand\\CrossStitchStand-1186.pt"
+                ]
+            },
+            {
+                "steps": 6233,
+                "file_path": "results\\CrossStitchStand01\\CrossStitchStand\\CrossStitchStand-6233.onnx",
+                "reward": 1.3114980032630996,
+                "creation_time": 1793883580.8702729,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchStand01\\CrossStitchStand\\CrossStitchStand-6233.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 6233,
+            "file_path": "results\\CrossStitchStand01\\CrossStitchStand.onnx",
+            "reward": 1.3114980032630996,
+            "creation_time": 1793883580.8702729,
+            "auxillary_file_paths": [
+                "results\\CrossStitchStand01\\CrossStitchStand\\CrossStitchStand-6233.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cpu"
+    }
+}

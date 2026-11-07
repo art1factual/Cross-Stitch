@@ -1,0 +1,42 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1794064724",
+        "python_version": "3.10.12 | packaged by conda-forge | (main, Jun 23 2023, 22:34:57) [MSC v.1936 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Users\\xavier\\miniforge3\\envs\\crossstitch\\Scripts\\mlagents-learn CrossStitchWalk.yaml --run-id=CrossStitchFootLift05 --resume --time-scale=1",
+        "mlagents_version": "1.1.0",
+        "mlagents_envs_version": "1.1.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.2.2+cpu",
+        "numpy_version": "1.23.5",
+        "end_time_seconds": "1794064787"
+    },
+    "total": 62.88346499999898,
+    "count": 1,
+    "self": 0.008796099988103379,
+    "children": {
+        "run_training.setup": {
+            "total": 0.12323010000545764,
+            "count": 1,
+            "self": 0.12323010000545764
+        },
+        "TrainerController.start_learning": {
+            "total": 62.75143880000542,
+            "count": 1,
+            "self": 0.0001404000140610151,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 62.75127669999347,
+                    "count": 1,
+                    "self": 62.75127669999347
+                },
+                "TrainerController._save_models": {
+                    "total": 2.1699997887481004e-05,
+                    "count": 1,
+                    "self": 2.1699997887481004e-05
+                }
+            }
+        }
+    }
+}

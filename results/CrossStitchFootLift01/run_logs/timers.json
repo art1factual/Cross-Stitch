@@ -1,0 +1,80 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1794025559",
+        "python_version": "3.10.12 | packaged by conda-forge | (main, Jun 23 2023, 22:34:57) [MSC v.1936 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Users\\xavier\\miniforge3\\envs\\crossstitch\\Scripts\\mlagents-learn CrossStitchWalk.yaml --run-id=CrossStitchFootLift01 --time-scale=1",
+        "mlagents_version": "1.1.0",
+        "mlagents_envs_version": "1.1.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.2.2+cpu",
+        "numpy_version": "1.23.5",
+        "end_time_seconds": "1794025597"
+    },
+    "total": 38.08998749999955,
+    "count": 1,
+    "self": 10.007332000001043,
+    "children": {
+        "run_training.setup": {
+            "total": 0.12608689999979106,
+            "count": 1,
+            "self": 0.12608689999979106
+        },
+        "TrainerController.start_learning": {
+            "total": 27.956568599998718,
+            "count": 1,
+            "self": 0.00037209999572951347,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 19.310445099999924,
+                    "count": 1,
+                    "self": 19.310445099999924
+                },
+                "TrainerController.advance": {
+                    "total": 8.539145999999164,
+                    "count": 1,
+                    "self": 3.170000127283856e-05,
+                    "children": {
+                        "env_step": {
+                            "total": 8.539114299997891,
+                            "count": 1,
+                            "self": 8.534372299996903,
+                            "children": {
+                                "SubprocessEnvManager._take_step": {
+                                    "total": 0.0047420000009879,
+                                    "count": 2,
+                                    "self": 0.00019529999917722307,
+                                    "children": {
+                                        "TorchPolicy.evaluate": {
+                                            "total": 0.004546700001810677,
+                                            "count": 2,
+                                            "self": 0.004546700001810677
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "trainer_threads": {
+                    "total": 1.2000018614344299e-06,
+                    "count": 1,
+                    "self": 1.2000018614344299e-06
+                },
+                "TrainerController._save_models": {
+                    "total": 0.10660420000203885,
+                    "count": 1,
+                    "self": 0.020448100000066916,
+                    "children": {
+                        "RLTrainer._checkpoint": {
+                            "total": 0.08615610000197194,
+                            "count": 1,
+                            "self": 0.08615610000197194
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

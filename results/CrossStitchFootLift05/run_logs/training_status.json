@@ -1,0 +1,65 @@
+{
+    "CrossStitchWalk": {
+        "checkpoints": [
+            {
+                "steps": 499992,
+                "file_path": "results\\CrossStitchFootLift05\\CrossStitchWalk\\CrossStitchWalk-499992.onnx",
+                "reward": -0.3582306395203775,
+                "creation_time": 1794040440.074678,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchFootLift05\\CrossStitchWalk\\CrossStitchWalk-499992.pt"
+                ]
+            },
+            {
+                "steps": 999995,
+                "file_path": "results\\CrossStitchFootLift05\\CrossStitchWalk\\CrossStitchWalk-999995.onnx",
+                "reward": 0.031190053574022304,
+                "creation_time": 1794054156.0276709,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchFootLift05\\CrossStitchWalk\\CrossStitchWalk-999995.pt"
+                ]
+            },
+            {
+                "steps": 1000011,
+                "file_path": "results\\CrossStitchFootLift05\\CrossStitchWalk\\CrossStitchWalk-1000011.onnx",
+                "reward": 0.030656317781798448,
+                "creation_time": 1794054156.0713084,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchFootLift05\\CrossStitchWalk\\CrossStitchWalk-1000011.pt"
+                ]
+            },
+            {
+                "steps": 1032299,
+                "file_path": "results\\CrossStitchFootLift05\\CrossStitchWalk\\CrossStitchWalk-1032299.onnx",
+                "reward": 0.3005823777878986,
+                "creation_time": 1794060777.9830523,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchFootLift05\\CrossStitchWalk\\CrossStitchWalk-1032299.pt"
+                ]
+            },
+            {
+                "steps": 1168704,
+                "file_path": "results\\CrossStitchFootLift05\\CrossStitchWalk\\CrossStitchWalk-1168704.onnx",
+                "reward": 1.2417695236937054,
+                "creation_time": 1794064501.7263963,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchFootLift05\\CrossStitchWalk\\CrossStitchWalk-1168704.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1168704,
+            "file_path": "results\\CrossStitchFootLift05\\CrossStitchWalk.onnx",
+            "reward": 1.2417695236937054,
+            "creation_time": 1794064501.7263963,
+            "auxillary_file_paths": [
+                "results\\CrossStitchFootLift05\\CrossStitchWalk\\CrossStitchWalk-1168704.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cpu"
+    }
+}
