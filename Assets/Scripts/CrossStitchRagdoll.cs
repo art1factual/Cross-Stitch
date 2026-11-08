@@ -104,7 +104,7 @@ public class CrossStitchRagdoll : MonoBehaviour
         }
 
     
-        behavior.BrainParameters.VectorObservationSize = 177;
+        behavior.BrainParameters.VectorObservationSize = 178;
         behavior.BrainParameters.NumStackedVectorObservations = 1;
 
     behavior.BrainParameters.ActionSpec = ActionSpec.MakeContinuous(48);

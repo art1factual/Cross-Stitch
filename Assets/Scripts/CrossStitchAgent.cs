@@ -34,9 +34,9 @@ public class CrossStitchAgent : Agent
 
     private bool initialized; 
 
-    private const float WalkDistance = 2f;
+    private const float WalkDistance = 10f;
 
-    private const float WalkTimeLimit = 10f;
+    private const float WalkTimeLimit = 30f;
 
     private Vector3 walkStart;
     private float previousProgress;
@@ -46,6 +46,10 @@ public class CrossStitchAgent : Agent
 
     private bool liftLeftNext;
     private float lastStepDistance;
+
+    private bool stepInProgress;
+    private float stepStartZ;
+    private int completedSteps;
 
     public override void Initialize()
     {
@@ -136,13 +140,15 @@ private void OnGUI()
         float tilt = Vector3.Angle(pelvis.rotation * Vector3.up, Vector3.up);
         GUILayout.Label($"Pelvis tilt {tilt:F0}");
         GUILayout.EndArea();
+        GUILayout.Label($"Completed steps: {completedSteps}");
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
         foreach(Rigidbody part in bodyParts)
         {
-            Vector3 position = transform.InverseTransformPoint(part.position);
+            Vector3 offset = part.position - pelvis.position;
+            Vector3 position = transform.InverseTransformDirection(offset);
 
             sensor.AddObservation(Vector3.ClampMagnitude(position / 3f, 1f));
 
@@ -177,25 +183,52 @@ private void OnGUI()
             sensor.AddObservation(Mathf.Clamp01(FootClearance(rightFootCollider) / 0.3f));
 
             sensor.AddObservation(liftLeftNext);
+            
+            float pelvisHeight = pelvis.position.y - transform.position.y;
+            sensor.AddObservation(Mathf.Clamp01(pelvisHeight / 2f));
     }
 
     private void RewardFootLift(float distance, float upright)
     {
-        if (upright < 0.7f || distance < lastStepDistance + 0.05f)
+
+        int movingIndex = liftLeftNext ? 0 : 1;
+        int supportingIndex = liftLeftNext ? 1 : 0;
+
+        Collider movingFoot = liftLeftNext ? leftFootCollider : rightFootCollider;
+
+        bool movingGrounded = footContacts[movingIndex].Grounded;
+        bool supportingGrounded = footContacts[supportingIndex].Grounded;
+
+        float footZ = transform.InverseTransformPoint(movingFoot.bounds.center).z;
+
+        if (!stepInProgress)
+        {
+            if (upright >= 0.7f && !movingGrounded && supportingGrounded && FootClearance(movingFoot) >= 0.04f)
+            {
+                stepInProgress = true;
+                stepStartZ = footZ;
+            }
+            return;
+
+        }
+
+        if (!movingGrounded)
         return;
 
-        bool leftLifted = !footContacts[0].Grounded && FootClearance(leftFootCollider) >= 0.04f;
+        bool advancedFoot = footZ >= stepStartZ + 0.05f;
+        bool advancedBody = distance >= lastStepDistance + 0.05f;
 
-        bool rightLifted = !footContacts[1].Grounded && FootClearance(rightFootCollider) >= 0.04f;
+        if (upright >= 0.7f && advancedFoot && advancedBody)
+        {
+            AddReward(0.1f);
+            completedSteps++;
+            lastStepDistance = distance;
+            liftLeftNext = !liftLeftNext;
 
-        bool completedLift = liftLeftNext ? leftLifted && footContacts[1].Grounded : rightLifted && footContacts[0].Grounded;
+        }
 
-        if (!completedLift) 
-        return;
 
-        AddReward(0.05f);
-        lastStepDistance = distance;
-        liftLeftNext = !liftLeftNext;
+        stepInProgress = false;
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -247,7 +280,7 @@ private void OnGUI()
 
         RewardFootLift(distance, upright);
 
-        float progress = Mathf.Clamp(distance / WalkDistance, -1f, 1f);
+        float progress = distance / 2f;
         float progressDelta = progress - previousProgress;
         previousProgress = progress;
 
@@ -348,6 +381,12 @@ private void OnGUI()
         previousProgress = 0f;
         liftLeftNext = Random.value < 0.5f;
         lastStepDistance = 0f;
+
+        stepInProgress = false;
+        stepStartZ = 0f;
+        completedSteps = 0;
+
+
     }
     private void ResetBody()
     {
