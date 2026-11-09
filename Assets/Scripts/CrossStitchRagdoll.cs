@@ -101,31 +101,23 @@ public class CrossStitchRagdoll : MonoBehaviour
             }
             pelvis.isKinematic = false;
 
-   BehaviorParameters behavior = GetComponent<BehaviorParameters>();
+    BehaviorParameters behavior = GetComponent<BehaviorParameters>();
 
-   if (behavior == null)
+    if (behavior == null)
         {
             behavior = gameObject.AddComponent<BehaviorParameters>();
+
         }
 
         behavior.BehaviorName = "CrossStitchCrossing";
         behavior.BrainParameters.VectorObservationSize = 229;
 
-    
-        behavior.BrainParameters.VectorObservationSize = 229;
         behavior.BrainParameters.NumStackedVectorObservations = 1;
+        behavior.BrainParameters.ActionSpec = ActionSpec.MakeContinuous(48);
 
-    behavior.BrainParameters.ActionSpec = ActionSpec.MakeContinuous(48);
-    behavior.BehaviorType = BehaviorType.Default;
-
-    behavior.BehaviorName = "CrossStitchWalk";
-
-
-
-    behavior.Model = trainedModel; 
-    behavior.BehaviorType = trainedModel != null
-    ? BehaviorType.InferenceOnly : BehaviorType.Default;
-    
+        behavior.Model = trainedModel;
+        behavior.BehaviorType = trainedModel != null
+        ? BehaviorType.InferenceOnly : BehaviorType.Default;
 
 
     CrossStitchAgent agent = gameObject.AddComponent<CrossStitchAgent>();

@@ -37,9 +37,9 @@
 
         private bool initialized; 
 
-        private const float WalkDistance = 12f;
+        private const float WalkDistance = 3f;
 
-        private const float WalkTimeLimit = 30f;
+        private const float WalkTimeLimit = 10f;
 
         private Vector3 walkStart;
         private float previousProgress;
@@ -194,7 +194,7 @@
 
                 sensor.AddObservation(stepInProgress);
 
-                Vector3 goal = course.Goal;
+                Vector3 goal = course.Origin + Vector3.forward * WalkDistance;
                 goal.y = pelvis.position.y;
 
                 Vector3 goalOffset = transform.InverseTransformDirection(goal - pelvis.position);
@@ -382,7 +382,7 @@
 
         float posture = Mathf.InverseLerp(0.4f, 0.95f, upright);
 
-        AddReward((gain / WalkDistance) * posture);
+        AddReward(gain * 0.5f * posture);
         float sliding = 0f;
 
         if (footContacts[0].Grounded)

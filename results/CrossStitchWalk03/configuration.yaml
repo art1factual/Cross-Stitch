@@ -1,6 +1,6 @@
 default_settings: null
 behaviors:
-  CrossStitchWalk:
+  CrossStitchCrossing:
     trainer_type: ppo
     hyperparameters:
       batch_size: 512
@@ -14,7 +14,7 @@ behaviors:
       learning_rate_schedule: linear
       beta_schedule: linear
       epsilon_schedule: linear
-    checkpoint_interval: 500000
+    checkpoint_interval: 100000
     network_settings:
       normalize: true
       hidden_units: 128
@@ -69,7 +69,7 @@ checkpoint_settings:
   run_id: CrossStitchWalk03
   initialize_from: null
   load_model: false
-  resume: false
+  resume: true
   force: false
   train_model: false
   inference: false

@@ -9,15 +9,42 @@
                 "auxillary_file_paths": [
                     "results\\CrossStitchWalk03\\CrossStitchWalk\\CrossStitchWalk-95899.pt"
                 ]
+            },
+            {
+                "steps": 499979,
+                "file_path": "results\\CrossStitchWalk03\\CrossStitchWalk\\CrossStitchWalk-499979.onnx",
+                "reward": -0.4952887665607374,
+                "creation_time": 1794209829.0048149,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchWalk03\\CrossStitchWalk\\CrossStitchWalk-499979.pt"
+                ]
+            },
+            {
+                "steps": 999882,
+                "file_path": "results\\CrossStitchWalk03\\CrossStitchWalk\\CrossStitchWalk-999882.onnx",
+                "reward": -0.49524879075811595,
+                "creation_time": 1794222867.2795012,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchWalk03\\CrossStitchWalk\\CrossStitchWalk-999882.pt"
+                ]
+            },
+            {
+                "steps": 1000010,
+                "file_path": "results\\CrossStitchWalk03\\CrossStitchWalk\\CrossStitchWalk-1000010.onnx",
+                "reward": -0.49524879075811595,
+                "creation_time": 1794222867.3329628,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchWalk03\\CrossStitchWalk\\CrossStitchWalk-1000010.pt"
+                ]
             }
         ],
         "final_checkpoint": {
-            "steps": 95899,
+            "steps": 1000010,
             "file_path": "results\\CrossStitchWalk03\\CrossStitchWalk.onnx",
-            "reward": -0.9718205690383911,
-            "creation_time": 1794187024.1420393,
+            "reward": -0.49524879075811595,
+            "creation_time": 1794222867.3329628,
             "auxillary_file_paths": [
-                "results\\CrossStitchWalk03\\CrossStitchWalk\\CrossStitchWalk-95899.pt"
+                "results\\CrossStitchWalk03\\CrossStitchWalk\\CrossStitchWalk-1000010.pt"
             ]
         }
     },
