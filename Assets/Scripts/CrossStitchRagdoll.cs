@@ -5,12 +5,17 @@ using Unity.MLAgents.Actuators;
 public class CrossStitchRagdoll : MonoBehaviour
 {
 
+    [SerializeField] private bool trafficEnabled = false;
     [SerializeField] private bool showTrainingPanel = true;
     [SerializeField]
     private Unity.InferenceEngine.ModelAsset trainedModel; 
     
     private void Start()
     {
+
+        GameObject courseObject = new GameObject("CrossStitch Course");
+        CrossStitchCourse course = courseObject.AddComponent<CrossStitchCourse>();
+        course.Build(transform.position, trafficEnabled);
 
         Rigidbody pelvis = CreateBodyPart("Pelvis", new Vector3(0f, 1.05f, 0f), new Vector3(0.45f, 0.30f, 0.30f), 6f);
 
@@ -103,8 +108,11 @@ public class CrossStitchRagdoll : MonoBehaviour
             behavior = gameObject.AddComponent<BehaviorParameters>();
         }
 
+        behavior.BehaviorName = "CrossStitchCrossing";
+        behavior.BrainParameters.VectorObservationSize = 229;
+
     
-        behavior.BrainParameters.VectorObservationSize = 178;
+        behavior.BrainParameters.VectorObservationSize = 229;
         behavior.BrainParameters.NumStackedVectorObservations = 1;
 
     behavior.BrainParameters.ActionSpec = ActionSpec.MakeContinuous(48);
@@ -121,7 +129,9 @@ public class CrossStitchRagdoll : MonoBehaviour
 
 
     CrossStitchAgent agent = gameObject.AddComponent<CrossStitchAgent>();
+    
     agent.showTrainingPanel = showTrainingPanel;
+
 
     DecisionRequester requester = gameObject.AddComponent<DecisionRequester>();
     requester.DecisionPeriod = 5;
