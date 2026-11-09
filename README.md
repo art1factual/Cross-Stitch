@@ -4,10 +4,11 @@ Introducing Cross-Stitch.
 
 https://art1factual.itch.io/cross-stitch
 
-**ScreenShots**
-![Uploading Cross-Stitching Statistical Informal Message Board - Demo.png…]()
+**ScreenShots*
 
 <img width="1525" height="753" alt="Cross-Stitch Screenshot Demo" src="https://github.com/user-attachments/assets/e2592097-b8c0-4c6a-a031-e3acfa6bdee9" />
+<img width="300" height="247" alt="Cross-Stitching Statistical Informal Message Board - Demo" src="https://github.com/user-attachments/assets/be8d6a8b-1979-4c33-89d4-18e03b530587" />
+
 
 This is an interactive Neurally-Adaptive Reinforcement Learning-based Crossy Road Simulator.
 
