@@ -1,0 +1,29 @@
+{
+    "CrossStitchCrossing": {
+        "checkpoints": [
+            {
+                "steps": 139,
+                "file_path": "results\\CrossStitchLiftPractice01\\CrossStitchCrossing\\CrossStitchCrossing-139.onnx",
+                "reward": -0.8730683525403341,
+                "creation_time": 1794274356.6432083,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchLiftPractice01\\CrossStitchCrossing\\CrossStitchCrossing-139.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 139,
+            "file_path": "results\\CrossStitchLiftPractice01\\CrossStitchCrossing.onnx",
+            "reward": -0.8730683525403341,
+            "creation_time": 1794274356.6432083,
+            "auxillary_file_paths": [
+                "results\\CrossStitchLiftPractice01\\CrossStitchCrossing\\CrossStitchCrossing-139.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cpu"
+    }
+}

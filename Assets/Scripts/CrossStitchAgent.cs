@@ -6,6 +6,13 @@
 
     public class CrossStitchAgent : Agent
     {
+
+        public enum TrainingStage 
+        {
+            LiftPractice, Walking, Crossing
+        }
+
+        public TrainingStage trainingStage = TrainingStage.LiftPractice; 
         private float episodeTime;
 
         [SerializeField] private bool logEpisodeStats = true;
@@ -31,6 +38,9 @@
 
         private ConfigurableJoint[] joints;
 
+        private CrossStitchJointMotor[] motors;
+        private float liftHoldTime;
+
         private Vector3[] startingPositions;
         private Quaternion[] startingRotations;
         private CrossStitchGroundContact[] footContacts;
@@ -39,7 +49,7 @@
 
         private const float WalkDistance = 3f;
 
-        private const float WalkTimeLimit = 10f;
+        private const float WalkTimeLimit = 30f;
 
         private Vector3 walkStart;
         private float previousProgress;
@@ -49,6 +59,11 @@
 
         private bool liftLeftNext;
         private float lastStepDistance;
+
+        private float bestLiftClearance;
+        private float supportingTime;
+        private float landingTime;
+
 
         private bool stepInProgress;
         private float stepStartZ;
@@ -75,6 +90,15 @@
 
             joints = GetComponentsInChildren<ConfigurableJoint>();
             System.Array.Sort(joints, (a, b) => string.CompareOrdinal(a.name, b .name));
+
+            motors = GetComponentsInChildren<CrossStitchJointMotor>();
+
+            System.Array.Sort(motors, (a, b) => string.CompareOrdinal(a.name, b.name));
+
+            if (motors.Length != 12)
+            {
+                throw new System.InvalidOperationException("There has been an expected amount of 12 joint motors. Please Update the CrossStitchRagdoll.Connect() Scriopt first.");
+            };
             footContacts = GetComponentsInChildren<CrossStitchGroundContact>();
 
             System.Array.Sort(footContacts, (a, b) => string.CompareOrdinal(a.name, b.name));
@@ -168,6 +192,11 @@
             GUILayout.Label($"Pelvis tilt {tilt:F0}");
             GUILayout.Label($"Completed steps: {completedSteps}");
             GUILayout.EndArea();
+
+            GUILayout.Label($"Completed Steps: {completedSteps}");
+
+            float distance = pelvis.position.z - course.Origin.z;
+            GUILayout.Label($"Forward Distances: {distance:F2} m");
         }
 
         public override void CollectObservations(VectorSensor sensor)
@@ -268,72 +297,124 @@
     }
 
         private void RewardFootLift(float distance, float upright)
-        {
+    {
+        const float targetClearance = 0.06f;
+        const float requiredLiftHold = 0.12f;
+        const float requiredLandingHold = 0.10f;
+        float dt = Time.fixedDeltaTime;
 
-            int movingIndex = liftLeftNext ? 0 : 1;
-            int supportingIndex = liftLeftNext ? 1 : 0;
+        int movingIndex = liftLeftNext ? 0 : 1;
+        int supportIndex = liftLeftNext ? 1 : 0;
 
-            Collider movingFoot = liftLeftNext ? leftFootCollider : rightFootCollider;
+        Collider movingFoot = liftLeftNext ? leftFootCollider : rightFootCollider;
 
-            bool movingGrounded = footContacts[movingIndex].Grounded;
-            bool supportingGrounded = footContacts[supportingIndex].Grounded;
-
-            float footZ = transform.InverseTransformPoint(movingFoot.bounds.center).z;
-
-            if (!stepInProgress)
+        bool movingGrounded = footContacts[movingIndex].Grounded;
+        bool supportGrounded = footContacts[supportIndex].Grounded;
+        
+        bool balanced = upright >= 0.85f && pelvis.position.y - course.Origin.y >= 0.8f;
+        
+        if (episodeTime < 0.3f)
+        return;
+        
+        supportingTime = supportGrounded && balanced ? supportingTime + dt : 0f;
+        
+        if (!stepInProgress)
             {
-                if (upright >= 0.7f && !movingGrounded && supportingGrounded && FootClearance(movingFoot) >= 0.04f)
+                if (movingGrounded)
+                stepStartZ = movingFoot.bounds.center.z;
+                if (supportingTime < 0.1f)
+                {
+                    liftHoldTime = 0f;
+                return;
+                }
+
+                float clearance = Mathf.Clamp(FootClearance(movingFoot), 0f, targetClearance);
+
+                float improvement = Mathf.Max(0f, clearance - bestLiftClearance);
+
+                AddReward(0.1f * improvement / targetClearance);
+
+                bestLiftClearance = Mathf.Max(bestLiftClearance, clearance);
+
+                bool raised = !movingGrounded && clearance >= targetClearance;
+
+                liftHoldTime = raised ? liftHoldTime + dt : 0f;
+
+                if (liftHoldTime >= requiredLiftHold)
                 {
                     stepInProgress = true;
-                    stepStartZ = footZ;
+                    landingTime = 0f;
                 }
                 return;
-
             }
 
-            if (!movingGrounded)
+            if (!supportGrounded || !balanced)
+        {
+            stepInProgress = false;
+            liftHoldTime = 0f;
+            landingTime = 0f;
             return;
+        }
+        
+    
 
-            bool advancedFoot = footZ >= stepStartZ + 0.05f;
-            bool advancedBody = distance >= lastStepDistance + 0.05f;
+    bool stableLanding = movingGrounded && supportGrounded && balanced; 
+    
+    landingTime = stableLanding ? landingTime + dt : 0f; 
+    if (landingTime < requiredLandingHold)
+    return;
 
-            if (upright >= 0.7f && advancedFoot && advancedBody)
+    bool forwardStep = movingFoot.bounds.center.z - stepStartZ >= 0.10f && distance - lastStepDistance >= 0.03f;
+
+    bool accepted = trainingStage == TrainingStage.LiftPractice || forwardStep;
+
+    if (accepted)
+        {
+            AddReward(0.15f);
+
+            if (trainingStage != TrainingStage.LiftPractice)
             {
-                AddReward(0.1f);
-                completedSteps++;
-                lastStepDistance = distance;
-                liftLeftNext = !liftLeftNext;
+                float progress = Mathf.Clamp(distance, 0f, WalkDistance);
+                float gain = Mathf.Clamp(progress - previousProgress, 0f, 0.45f);
 
+                AddReward(0.5f * gain);
+
+                previousProgress = Mathf.Max(previousProgress, progress);
             }
+            completedSteps++;
+            liftLeftNext = !liftLeftNext;
+            lastStepDistance = distance;
 
+            bestLiftClearance = 0f;
+          
+        }
 
             stepInProgress = false;
-        }
+            liftHoldTime = 0f;
+            supportingTime = 0f;
+            landingTime = 0f;
+    }
 
         public override void OnActionReceived(ActionBuffers actions)
         {
+            if (!initialized)
+            return;
+
+
+
             var controls = actions.ContinuousActions;
-            for (int i = 0; i < joints.Length; i++)
+
+            if (controls.Length != motors.Length * 4)
+        {
+            throw new System.InvalidOperationException("Expected 48 Continuous Outcoming Actions: Four Per each Motor.");
+        }
+
+            for (int i = 0; i < motors.Length; i++)
             {
-                ConfigurableJoint joint = joints[i];
-
-                bool isLegJoint = joint.name.EndsWith("Thigh") || joint.name.EndsWith("Shin");
-
-                float angleScale = isLegJoint ? 0.9f : 0.5f;
+    
                 int index = i * 4;
 
-                float x = Mathf.Clamp(controls[index], -1f, 1f) * joint.highAngularXLimit.limit * angleScale;
-                float y = Mathf.Clamp(controls[index + 1], -1f, 1f) * joint.angularYLimit.limit * 0.5f;
-                float z = Mathf.Clamp(controls[index + 2], -1f, 1f) * joint.angularZLimit.limit * 0.5f;
-                
-                joint.targetRotation = Quaternion.Inverse(Quaternion.Euler(x, y, z));
-
-                float strength = Mathf.Clamp(controls[index + 3], -1f, 1f);
-                JointDrive drive = joint.slerpDrive;
-                drive.positionSpring = 600f + 400f * strength;
-                joint.slerpDrive = drive;
-
-        
+                motors[i].Apply(controls[index], controls[index], controls[index + 2], controls[index + 3], Time.fixedDeltaTime);
             }
             ScoreWalking(controls);
 
@@ -344,6 +425,8 @@
         {
             float dt = Time.fixedDeltaTime;
             episodeTime += dt;
+
+    
 
             if (carHit)
             {
@@ -375,14 +458,6 @@
 
         RewardFootLift(distance, upright);
 
-        float progress = Mathf.Clamp(distance, 0f, WalkDistance);
-        float gain = Mathf.Max(0f, progress - previousProgress);
-
-        previousProgress = Mathf.Max(previousProgress, progress);
-
-        float posture = Mathf.InverseLerp(0.4f, 0.95f, upright);
-
-        AddReward(gain * 0.5f * posture);
         float sliding = 0f;
 
         if (footContacts[0].Grounded)
@@ -400,7 +475,7 @@
         
         bool supported = footContacts[0].Grounded || footContacts[1].Grounded;
 
-        if (distance >= WalkDistance && upright >= 0.8f && supported && completedSteps >= 4)
+       if (trainingStage != TrainingStage.LiftPractice && distance >= WalkDistance && upright >= 0.8f && supported && completedSteps >= 4)
         {
             AddReward(1f);
             FinishStandingAttempt("Crossed safely", reachedFinish: true);
@@ -408,12 +483,19 @@
             return;
 
         }
+
+       if (trainingStage == TrainingStage.LiftPractice && completedSteps >= 2)
+        {
+            AddReward(0.5f);
+            FinishStandingAttempt("Two alternating lift-and-land cycles have been accurately and successfully completed", reachedFinish: true);
+
+            return;
+        }
         
         if (episodeTime >= WalkTimeLimit)
         {
-            AddReward(-0.5f);
-            FinishStandingAttempt("Walking time Limit");
-            return;
+            FinishStandingAttempt("Lift Practice had Timed Out");
+            
         }
         
         }
@@ -476,14 +558,11 @@
             carHit = false;
 
 
-            foreach (ConfigurableJoint joint in joints)
-            {
-                joint.targetRotation = Quaternion.identity;
-
-                JointDrive drive = joint.slerpDrive;
-                drive.positionSpring = 600f;
-                joint.slerpDrive = drive;
-            }
+           foreach(CrossStitchJointMotor motor in motors)
+        {
+            motor.ResetMotor();
+        }
+        liftHoldTime = 0f;
             ResetBody();
             walkStart = transform.InverseTransformPoint(pelvis.position);
 
@@ -495,6 +574,15 @@
             stepInProgress = false;
             stepStartZ = 0f;
             completedSteps = 0;
+
+            bestLiftClearance = 0f;
+            supportingTime = 0f;
+            landingTime = 0f;
+
+            foreach (CrossStitchCar car in course.Cars)
+        {
+            car.gameObject.SetActive(trainingStage == TrainingStage.Crossing);
+        }
             
             course.ResetTraffic();
             Physics.SyncTransforms();
@@ -528,7 +616,9 @@
             Physics.SyncTransforms();
 
             Debug.Log($"Reset pelvis: {pelvis.position:F3} | Ragdoll root: {transform.position:F3}", this);
+
         }
+
 
         [ContextMenu("Test Episode Reset")]
         private void TestEpisodeReset()

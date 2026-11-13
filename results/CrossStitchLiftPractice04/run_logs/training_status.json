@@ -1,0 +1,65 @@
+{
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cpu"
+    },
+    "CrossStitchCrossing": {
+        "checkpoints": [
+            {
+                "steps": 699970,
+                "file_path": "results\\CrossStitchLiftPractice04\\CrossStitchCrossing\\CrossStitchCrossing-699970.onnx",
+                "reward": -0.04999997839331627,
+                "creation_time": 1794306619.0652444,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchLiftPractice04\\CrossStitchCrossing\\CrossStitchCrossing-699970.pt"
+                ]
+            },
+            {
+                "steps": 799920,
+                "file_path": "results\\CrossStitchLiftPractice04\\CrossStitchCrossing\\CrossStitchCrossing-799920.onnx",
+                "reward": -0.06168569278504167,
+                "creation_time": 1794309732.3452613,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchLiftPractice04\\CrossStitchCrossing\\CrossStitchCrossing-799920.pt"
+                ]
+            },
+            {
+                "steps": 899978,
+                "file_path": "results\\CrossStitchLiftPractice04\\CrossStitchCrossing\\CrossStitchCrossing-899978.onnx",
+                "reward": -0.04989997670054436,
+                "creation_time": 1794312825.4546936,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchLiftPractice04\\CrossStitchCrossing\\CrossStitchCrossing-899978.pt"
+                ]
+            },
+            {
+                "steps": 999994,
+                "file_path": "results\\CrossStitchLiftPractice04\\CrossStitchCrossing\\CrossStitchCrossing-999994.onnx",
+                "reward": -0.04969997704029083,
+                "creation_time": 1794315931.549102,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchLiftPractice04\\CrossStitchCrossing\\CrossStitchCrossing-999994.pt"
+                ]
+            },
+            {
+                "steps": 1037594,
+                "file_path": "results\\CrossStitchLiftPractice04\\CrossStitchCrossing\\CrossStitchCrossing-1037594.onnx",
+                "reward": -0.04969997704029083,
+                "creation_time": 1794317099.3003104,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchLiftPractice04\\CrossStitchCrossing\\CrossStitchCrossing-1037594.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1037594,
+            "file_path": "results\\CrossStitchLiftPractice04\\CrossStitchCrossing.onnx",
+            "reward": -0.04969997704029083,
+            "creation_time": 1794317099.3003104,
+            "auxillary_file_paths": [
+                "results\\CrossStitchLiftPractice04\\CrossStitchCrossing\\CrossStitchCrossing-1037594.pt"
+            ]
+        }
+    }
+}

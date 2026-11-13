@@ -1,0 +1,65 @@
+{
+    "CrossStitchCrossing": {
+        "checkpoints": [
+            {
+                "steps": 799916,
+                "file_path": "results\\CrossStitchFirstSteps01\\CrossStitchCrossing\\CrossStitchCrossing-799916.onnx",
+                "reward": -0.3383740366113429,
+                "creation_time": 1794258842.7136502,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchFirstSteps01\\CrossStitchCrossing\\CrossStitchCrossing-799916.pt"
+                ]
+            },
+            {
+                "steps": 899992,
+                "file_path": "results\\CrossStitchFirstSteps01\\CrossStitchCrossing\\CrossStitchCrossing-899992.onnx",
+                "reward": -0.3336903353532155,
+                "creation_time": 1794262564.171509,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchFirstSteps01\\CrossStitchCrossing\\CrossStitchCrossing-899992.pt"
+                ]
+            },
+            {
+                "steps": 999964,
+                "file_path": "results\\CrossStitchFirstSteps01\\CrossStitchCrossing\\CrossStitchCrossing-999964.onnx",
+                "reward": -0.33931129024578977,
+                "creation_time": 1794266302.6839254,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchFirstSteps01\\CrossStitchCrossing\\CrossStitchCrossing-999964.pt"
+                ]
+            },
+            {
+                "steps": 1099919,
+                "file_path": "results\\CrossStitchFirstSteps01\\CrossStitchCrossing\\CrossStitchCrossing-1099919.onnx",
+                "reward": -0.3464319705963135,
+                "creation_time": 1794269906.7556403,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchFirstSteps01\\CrossStitchCrossing\\CrossStitchCrossing-1099919.pt"
+                ]
+            },
+            {
+                "steps": 1181294,
+                "file_path": "results\\CrossStitchFirstSteps01\\CrossStitchCrossing\\CrossStitchCrossing-1181294.onnx",
+                "reward": -0.33161946147117977,
+                "creation_time": 1794272422.363717,
+                "auxillary_file_paths": [
+                    "results\\CrossStitchFirstSteps01\\CrossStitchCrossing\\CrossStitchCrossing-1181294.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1181294,
+            "file_path": "results\\CrossStitchFirstSteps01\\CrossStitchCrossing.onnx",
+            "reward": -0.33161946147117977,
+            "creation_time": 1794272422.363717,
+            "auxillary_file_paths": [
+                "results\\CrossStitchFirstSteps01\\CrossStitchCrossing\\CrossStitchCrossing-1181294.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cpu"
+    }
+}

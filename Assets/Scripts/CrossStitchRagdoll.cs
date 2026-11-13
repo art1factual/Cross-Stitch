@@ -5,6 +5,9 @@ using Unity.MLAgents.Actuators;
 public class CrossStitchRagdoll : MonoBehaviour
 {
 
+    [SerializeField]
+    private CrossStitchAgent.TrainingStage trainingStage = CrossStitchAgent.TrainingStage.LiftPractice;
+
     [SerializeField] private bool trafficEnabled = false;
     [SerializeField] private bool showTrainingPanel = true;
     [SerializeField]
@@ -63,6 +66,8 @@ public class CrossStitchRagdoll : MonoBehaviour
         Connect(rightThigh, pelvis, new Vector3(0.15f, 0.90f, 0f), 45f);
         Connect(leftShin, leftThigh, new Vector3(-0.15f, 0.49f, 0f), 60f);
         Connect(rightShin, rightThigh, new Vector3(0.15f, 0.49f, 0f), 60f);
+
+       
         
         //Shoulders and Elbows
         Connect(leftUpperArm, torso, new Vector3(-0.31f, 1.66f, 0f), 65f);
@@ -121,7 +126,8 @@ public class CrossStitchRagdoll : MonoBehaviour
 
 
     CrossStitchAgent agent = gameObject.AddComponent<CrossStitchAgent>();
-    
+    agent.trainingStage = trainingStage;
+
     agent.showTrainingPanel = showTrainingPanel;
 
 
@@ -163,7 +169,7 @@ public class CrossStitchRagdoll : MonoBehaviour
         return body;
     }
 
-    private void Connect(Rigidbody child, Rigidbody parent, Vector3 localAnchor, float angleLimit)
+        private void Connect(Rigidbody child, Rigidbody parent, Vector3 localAnchor, float angleLimit)
     {
         ConfigurableJoint joint = child.gameObject.AddComponent<ConfigurableJoint>();
 
@@ -171,35 +177,85 @@ public class CrossStitchRagdoll : MonoBehaviour
         joint.autoConfigureConnectedAnchor = false;
 
         Vector3 worldAnchor = transform.TransformPoint(localAnchor);
+
         joint.anchor = child.transform.InverseTransformPoint(worldAnchor);
+
         joint.connectedAnchor = parent.transform.InverseTransformPoint(worldAnchor);
-        
 
-    joint.xMotion = ConfigurableJointMotion.Locked;
-    joint.yMotion = ConfigurableJointMotion.Locked;
-    joint.zMotion = ConfigurableJointMotion.Locked;
+        joint.axis = Vector3.right;
+        joint.secondaryAxis = Vector3.up;
 
-    joint.angularXMotion = ConfigurableJointMotion.Limited;
+        joint.xMotion = ConfigurableJointMotion.Locked;
+        joint.yMotion = ConfigurableJointMotion.Locked;
+        joint.zMotion = ConfigurableJointMotion.Locked;
 
-    joint.angularYMotion = ConfigurableJointMotion.Limited;
-    joint.angularZMotion = ConfigurableJointMotion.Limited;
+        Vector3 low = Vector3.one * -angleLimit;
+        Vector3 high = Vector3.one * angleLimit;
 
-    joint.lowAngularXLimit = new SoftJointLimit { limit = -angleLimit };
-    joint.highAngularXLimit = new SoftJointLimit { limit = angleLimit };
-    joint.angularYLimit = new SoftJointLimit { limit = angleLimit };
-    joint.angularZLimit = new SoftJointLimit { limit = angleLimit };
-    joint.enableCollision = false;
+        float stiffness = 600f;
+        float damping = 60f;
+        float torque = 500f;
 
-    joint.configuredInWorldSpace = false;
-    joint.rotationDriveMode = RotationDriveMode.Slerp;
+        if (child.name.EndsWith("Thigh"))
+        {
+            low = new Vector3(-85f, -12f, -25f);
+            high = new Vector3(35f, 12f, 25f);
 
-    joint.slerpDrive = new JointDrive
-    {
-        positionSpring = 600f, positionDamper = 60f, maximumForce = 1000f
-    };
+            stiffness = 800f;
+            damping = 70f;
+            torque = 550f;
+        }
+        else if (child.name.EndsWith("Shin"))
+        {
+            
+            low = Vector3.zero;
+            high = new Vector3(115f, 0f, 0f);
 
-    joint.targetRotation = Quaternion.identity;
-    joint.targetAngularVelocity = Vector3.zero;
+            stiffness = 650f;
+            damping = 55f;
+            torque = 400f;
 
+        }
+        else if (child.name.EndsWith("Foot"))
+        {
+            low = new Vector3(-35f, 0f, -12f);
+            high = new Vector3(35f, 0f, 12f);
+
+            stiffness = 420f;
+            damping = 40f;
+            torque = 250f;
+        }
+        else if (child.name.EndsWith("Forearm"))
+        {
+            low = new Vector3(-110f, 0f, 0f);
+            high = Vector3.zero;
+
+            stiffness = 150f;
+            damping = 20f;
+            torque = 90f;
+        }
+
+        joint.angularXMotion = ConfigurableJointMotion.Limited;
+        joint.angularYMotion = low.y == 0f && high.y ==0f ? ConfigurableJointMotion.Locked : ConfigurableJointMotion.Limited;
+
+        joint.angularZMotion = low.z == 0f && high.z == 0f ? ConfigurableJointMotion.Locked : ConfigurableJointMotion.Limited;
+
+        joint.lowAngularXLimit = new SoftJointLimit { limit = low.x };
+
+        joint.highAngularXLimit = new SoftJointLimit { limit = high.x };
+
+        joint.angularYLimit = new SoftJointLimit { limit = Mathf.Max(-low.y, high.y) };
+        joint.angularZLimit = new SoftJointLimit { limit = Mathf.Max(-low.z, high.z) };
+
+        joint.enableCollision = false;
+        joint.configuredInWorldSpace = false;
+
+        joint.rotationDriveMode = RotationDriveMode.XYAndZ;
+
+        CrossStitchJointMotor motor = child.gameObject.AddComponent<CrossStitchJointMotor>();
+
+        motor.Configure(low, high, stiffness, damping, torque);
     }
+    
+
 }

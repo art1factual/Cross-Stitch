@@ -509,7 +509,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CrossStitchRagdoll
   trafficEnabled: 1
   showTrainingPanel: 1
-  trainedModel: {fileID: 5022602860645237092, guid: 889430c65b23ba24dadb566dca95a77a, type: 3}
+  trainedModel: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
